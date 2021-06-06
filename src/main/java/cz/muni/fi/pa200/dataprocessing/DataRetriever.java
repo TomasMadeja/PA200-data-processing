@@ -1,32 +1,39 @@
 package cz.muni.fi.pa200.dataprocessing;
 
+import cz.muni.fi.pa200.dataprocessing.api.OpenSkyApi;
 import cz.muni.fi.pa200.dataprocessing.exceptions.RetrievalError;
+import cz.muni.fi.pa200.dataprocessing.model.OpenSkyStates;
+import cz.muni.fi.pa200.dataprocessing.model.StateVector;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 public class DataRetriever {
 
-    String getFlightData() {
-        var builder = new OkHttpClient.Builder();
-        builder.connectTimeout(50, TimeUnit.SECONDS);
-        builder.callTimeout(50, TimeUnit.SECONDS);
-        builder.readTimeout(50, TimeUnit.SECONDS);
-        OkHttpClient client = builder.build();
-        client.writeTimeoutMillis();
-        String url = "https://opensky-network.org/api/states/all";
+    private final OpenSkyApi api;
 
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
+    public DataRetriever() {
+        api = buildApiInstance();
+    }
 
-        try (Response response = client.newCall(request).execute()) {
-            return response.body().string();
+    /**
+     * Fetch current flight vector
+     * @return OpenSkyStates
+     * @throws RetrievalError if error occured during request
+     */
+    OpenSkyStates getFlightVectors() {
+        try {
+            return api.getStates(0, null);
         } catch (IOException e) {
-            throw new RetrievalError(url, e);
+            throw new RetrievalError("Failed to get state vectors", e);
         }
+    }
+
+    private static OpenSkyApi buildApiInstance() {
+        return new OpenSkyApi(null, null, 10, 70, 60);
     }
 }

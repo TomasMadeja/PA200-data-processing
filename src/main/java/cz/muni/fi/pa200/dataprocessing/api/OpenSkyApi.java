@@ -64,11 +64,32 @@ public class OpenSkyApi {
 	}
 
 	/**
-	 * Create an instance of the API for authenticated access
+	 * Create an instance of the API for authenticated access and deafult timeout of 6 sec
 	 * @param username an OpenSky username
 	 * @param password an OpenSky password for the given username
 	 */
-	public OpenSkyApi(String username, String password) {
+	public OpenSkyApi(
+			String username,
+			String password
+	) {
+		this(username, password, 2, 2, 2);
+	}
+
+	/**
+	 * Create an instance of the API for authenticated access
+	 * @param username an OpenSky username
+	 * @param password an OpenSky password for the given username
+	 * @param connectTimeout connect timeout
+	 * @param callTimeout call timeout
+	 * @param readTimeout read
+	 */
+	public OpenSkyApi(
+			String username,
+			String password,
+			int connectTimeout,
+			int callTimeout,
+			int readTimeout
+	) {
 		lastRequestTime = new HashMap<>();
 		// set up JSON mapper
 		mapper = new ObjectMapper();
@@ -80,9 +101,9 @@ public class OpenSkyApi {
 
 		var builder = new OkHttpClient.Builder();
 
-		builder.connectTimeout(50, TimeUnit.SECONDS);
-		builder.callTimeout(50, TimeUnit.SECONDS);
-		builder.readTimeout(50, TimeUnit.SECONDS);
+		builder.connectTimeout(connectTimeout, TimeUnit.SECONDS);
+		builder.callTimeout(callTimeout, TimeUnit.SECONDS);
+		builder.readTimeout(readTimeout, TimeUnit.SECONDS);
 
         if (authenticated) {
             okHttpClient = builder.addInterceptor(new BasicAuthInterceptor(username, password))

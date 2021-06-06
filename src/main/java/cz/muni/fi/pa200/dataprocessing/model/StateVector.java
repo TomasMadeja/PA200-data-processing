@@ -1,5 +1,7 @@
 package cz.muni.fi.pa200.dataprocessing.model;
 
+import com.microsoft.azure.storage.table.TableServiceEntity;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -9,7 +11,7 @@ import java.util.Set;
  *
  * @author Markus Fuchs, fuchs@opensky-network.org
  */
-public class StateVector implements Serializable {
+public class StateVector extends TableServiceEntity implements Serializable {
 	private static final long serialVersionUID = -8285575266619754750L;
 
 	private Double geoAltitude;
@@ -31,9 +33,12 @@ public class StateVector implements Serializable {
 
 	private Set<Integer> serials;
 
-	public StateVector() {}
+	public StateVector() {
+		super();
+	}
 
 	public StateVector(String icao24) {
+		super();
 		if (icao24 == null) throw new RuntimeException("Invalid icao24. Must not be null");
 		this.icao24 = icao24;
 		this.serials = null;

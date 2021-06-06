@@ -18,6 +18,8 @@ test {
 dependencies {
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.3'
+    // https://mvnrepository.com/artifact/com.microsoft.azure/azure-storage
+    implementation group: 'com.microsoft.azure', name: 'azure-storage', version: '8.6.6'
 
     implementation 'com.google.code.gson:gson:2.8.7'
     // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api

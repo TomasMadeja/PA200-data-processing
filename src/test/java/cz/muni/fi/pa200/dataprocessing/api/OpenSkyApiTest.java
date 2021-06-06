@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class OpenSkyApiTest {
 
-    private OpenSkyApi api = new OpenSkyApi(null, null);
+    private OpenSkyApi api = new OpenSkyApi(null, null, 1, 60, 60);
 
     @Test
     void sampleTest() throws IOException {
@@ -28,7 +28,7 @@ class OpenSkyApiTest {
                 return null;
             }
         }).collect(toList());
-        assertThat(mapper.readValue(rows.get(0), StateVector.class)).isNull();
-        assertThat(rows).isEmpty();
+        assertThat(rows).isNotEmpty();
+        assertThat(mapper.readValue(rows.get(0), StateVector.class)).isNotNull();
     }
 }

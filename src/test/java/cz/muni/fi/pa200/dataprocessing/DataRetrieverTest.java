@@ -10,8 +10,9 @@ class DataRetrieverTest {
 
     @Test
     void getAllFlights() {
-        String response = api.getFlightData();
-        assertThat(response).isNotEmpty();
+        var states = api.getFlightVectors();
+        assertThat(states).isNotNull();
+        assertThat(states.getStates()).isNotEmpty();
     }
 
     @Test
