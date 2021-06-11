@@ -15,6 +15,8 @@ import cz.muni.fi.pa200.dataprocessing.StateVectorUploader;
 import cz.muni.fi.pa200.dataprocessing.exceptions.UploadError;
 import cz.muni.fi.pa200.dataprocessing.model.OpenSkyStates;
 
+import static cz.muni.fi.pa200.dataprocessing.data.Config.getTableURI;
+
 /**
  * Azure Functions with Timer trigger.
  */
@@ -31,14 +33,14 @@ public class TimerTriggerFunction {
 
         OpenSkyStates flightVectors = retrieveFlightVectors();
 
-        URI primaryUri = getTableURI();
-        if (primaryUri == null) {
+        URI primaryURI = getTableURI();
+        if (primaryURI == null) {
             context.getLogger().info("Could not create URI.");
             return;
         }
 
         try {
-            uploadFlightVectorsToTable(primaryUri, flightVectors);
+            uploadFlightVectorsToTable(primaryURI, flightVectors);
         } catch (UploadError e) {
             context.getLogger().info("Could not upload flight vectors.");
         }
@@ -47,23 +49,6 @@ public class TimerTriggerFunction {
     private OpenSkyStates retrieveFlightVectors() {
         DataRetriever dataRetriever = new DataRetriever();
         return dataRetriever.getFlightVectors();
-    }
-
-    /**
-     * Creates URI which specifies the table, the URI must include the SAS token
-     * @return URI of the table, null if the creation does not succeed
-     *
-     * https://docs.microsoft.com/en-us/java/api/com.microsoft.azure.storage.table.cloudtable?view=azure-java-legacy
-     * https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview
-     */
-    private URI getTableURI() {
-        URI primaryUri = null;
-        try {
-            primaryUri = new URI(""); // TODO enter the table URI
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-        return primaryUri;
     }
 
     /**
@@ -80,6 +65,5 @@ public class TimerTriggerFunction {
         } catch (StorageException e) {
             throw new UploadError("Upload error", e.getCause());
         }
-
     }
 }
