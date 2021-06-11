@@ -12,6 +12,7 @@ import com.microsoft.azure.storage.StorageUri;
 import com.microsoft.azure.storage.table.CloudTable;
 import cz.muni.fi.pa200.dataprocessing.DataRetriever;
 import cz.muni.fi.pa200.dataprocessing.StateVectorUploader;
+import cz.muni.fi.pa200.dataprocessing.exceptions.UploadError;
 import cz.muni.fi.pa200.dataprocessing.model.OpenSkyStates;
 
 /**
@@ -38,8 +39,8 @@ public class TimerTriggerFunction {
 
         try {
             uploadFlightVectorsToTable(primaryUri, flightVectors);
-        } catch (StorageException e) {
-            e.printStackTrace();
+        } catch (UploadError e) {
+            context.getLogger().info("Could not upload flight vectors.");
         }
     }
 
@@ -69,11 +70,16 @@ public class TimerTriggerFunction {
      * Uploads flight vectors to table specified by URI
      * @param primaryUri URI of table
      * @param flightVectors OpenSkyStates
-     * @throws StorageException if error occurred during upload
+     * @throws UploadError if error occurred during upload
      */
-    private void uploadFlightVectorsToTable(URI primaryUri, OpenSkyStates flightVectors) throws StorageException {
-        CloudTable table = new CloudTable(new StorageUri(primaryUri));
-        StateVectorUploader stateVectorUploader = new StateVectorUploader(new Random(), table, 32);
-        stateVectorUploader.uploadToTable(flightVectors.getStates(), flightVectors.getTime());
+    private void uploadFlightVectorsToTable(URI primaryUri, OpenSkyStates flightVectors) {
+        try {
+            CloudTable table = new CloudTable(new StorageUri(primaryUri));
+            StateVectorUploader stateVectorUploader = new StateVectorUploader(new Random(), table, 32);
+            stateVectorUploader.uploadToTable(flightVectors.getStates(), flightVectors.getTime());
+        } catch (StorageException e) {
+            throw new UploadError("Upload error", e.getCause());
+        }
+
     }
 }
