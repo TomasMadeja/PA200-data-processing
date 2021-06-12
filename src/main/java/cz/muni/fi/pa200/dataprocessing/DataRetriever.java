@@ -25,7 +25,7 @@ public class DataRetriever {
      * @return OpenSkyStates
      * @throws RetrievalError if error occured during request
      */
-    OpenSkyStates getFlightVectors() {
+    public OpenSkyStates getFlightVectors() {
         try {
             return api.getStates(0, null);
         } catch (IOException e) {

@@ -1,7 +1,10 @@
 plugins {
     id 'java'
     id 'idea'
+    id "com.microsoft.azure.azurefunctions" version "1.5.1"
 }
+
+apply plugin: "com.microsoft.azure.azurefunctions"
 
 group 'cz.muni.fi'
 version '1.0-SNAPSHOT'
@@ -29,4 +32,15 @@ dependencies {
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.6.1'
     // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.9.1'
+    implementation 'com.microsoft.azure.functions:azure-functions-java-library:1.4.0'
+}
+azurefunctions {
+    resourceGroup = 'java-functions-group'
+    appName = 'PA200-data-processing-functions'
+    pricingTier = 'Consumption'
+    region = 'westeurope'
+    runtime {
+        os = 'windows'
+    }
+    localDebug = "transport=dt_socket,server=y,suspend=n,address=5005"
 }
